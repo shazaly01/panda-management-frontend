@@ -18,7 +18,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useItemStore } from '@/stores/itemStore'
+import { useItemStore } from '@/stores/ItemStore'
 import { storeToRefs } from 'pinia'
 import AppDropdown from '@/components/ui/AppDropdown.vue'
 
