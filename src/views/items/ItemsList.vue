@@ -44,7 +44,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
-import { useItemStore } from '@/stores/itemStore'
+import { useItemStore } from '@/stores/ItemStore'
 
 import AppButton from '@/components/ui/AppButton.vue'
 import ItemsTable from './ItemsTable.vue'
