@@ -25,7 +25,10 @@ export const useReportStore = defineStore('report', () => {
   const accountStatement = ref(null)
 
   const designersReport = ref([])
-  const designersTotals = ref({ grand_total_sales: 0, grand_commissions: 0 })
+  const designersTotals = ref({
+    total_sales: 0,
+    total_commissions: 0,
+  })
 
   // --- 2. العمليات (Actions) ---
 
@@ -107,11 +110,18 @@ export const useReportStore = defineStore('report', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await reportService.getDesignersReport(filters)
+      // نرسل نسخة من الفلاتر لضمان عدم إرسال كائنات معقدة
+      const response = await reportService.getDesignersReport({ ...filters })
       designersReport.value = response.data.data
-      designersTotals.value = response.data.totals
+
+      // تحديث الإجماليات مباشرة
+      designersTotals.value = {
+        total_sales: response.data.totals.total_sales,
+        total_commissions: response.data.totals.total_commissions,
+      }
     } catch (err) {
       error.value = 'فشل في جلب تقرير المصممين'
+      console.error(err)
     } finally {
       loading.value = false
     }

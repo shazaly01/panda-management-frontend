@@ -121,15 +121,15 @@ const allNavLinks = shallowRef([
   {
     name: 'العمليات',
     icon: ShoppingCartIcon,
-    permission: 'sales.view', // صلاحية المجموعة (يمكن تعديل منطق العرض في الـ Template إذا لزم الأمر)
+    permission: 'sale.view', // صلاحية المجموعة (يمكن تعديل منطق العرض في الـ Template إذا لزم الأمر)
     children: [
-      { name: 'المبيعات', routeName: 'SalesList', permission: 'sales.view' },
+      { name: 'المبيعات', routeName: 'SalesList', permission: 'sale.view' },
       { name: 'المشتريات', routeName: 'PurchasesList', permission: 'purchase.view' },
-      {
-        name: 'التحويلات المخزنية',
-        routeName: 'transfers.index',
-        permission: 'inventory-trx.view',
-      },
+      // {
+      //   name: 'التحويلات المخزنية',
+      //   routeName: 'transfers.index',
+      //   permission: 'inventory-trx.view',
+      // },
       {
         name: 'التسويات الجردية',
         routeName: 'adjustments.index',
@@ -165,26 +165,33 @@ const allNavLinks = shallowRef([
   {
     name: 'التقارير',
     icon: DocumentChartBarIcon,
-    // permission: 'reports.inventory', // فعلها إذا كنت تستخدم صلاحيات التقارير
+    permission: 'report.view',
     children: [
-      // +++ [تمت إضافة تقرير المخزون هنا] +++
-      { name: 'المخزون الحالي', routeName: 'InventoryReport' },
+      {
+        name: 'المخزون الحالي',
+        routeName: 'InventoryReport',
+        permission: 'report.view', // أزلنا كلمة meta
+      },
       {
         name: 'حركة صنف (كارت صنف)',
-        routeName: 'ItemMovementReport', // [جديد] التأكد من تطابق الاسم مع الـ Router
+        routeName: 'ItemMovementReport',
+        permission: 'report.view', // أزلنا كلمة meta
       },
       {
         name: 'أرصدة العملاء والموردين',
-        routeName: 'PartnerBalanceReport', // يجب أن يطابق الاسم في router/index.js
-        // permission: 'report.view',
+        routeName: 'PartnerBalanceReport',
+        permission: 'report.view', // أزلنا كلمة meta
       },
-      { name: 'كشف حساب تفصيلي', routeName: 'AccountStatement' },
+      {
+        name: 'كشف حساب تفصيلي',
+        routeName: 'AccountStatement',
+        permission: 'report.view', // أضف هذه لكي لا يختفي هذا السطر
+      },
       {
         name: 'عمولات المصممين',
         routeName: 'DesignersReport',
+        permission: 'report.view', // أزلنا كلمة meta
       },
-      //{ name: 'بطاقة الصنف', routeName: 'StockCardReport', permission: 'reports.inventory' },
-      // يمكن إضافة تقارير أخرى هنا مستقبلاً مثل (reports.financial)
     ],
   },
 

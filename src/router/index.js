@@ -144,7 +144,7 @@ const routes = [
         path: 'sales',
         name: 'SalesList',
         component: SalesList,
-        meta: { permission: 'sales.view' }, // من ملف الـ Seeder
+        meta: { permission: 'sale.view' }, // من ملف الـ Seeder
       },
       {
         path: 'purchases',

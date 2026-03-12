@@ -281,7 +281,7 @@ import DesignersDropdown from '@/components/forms/DesignersDropdown.vue'
 const reportStore = useReportStore()
 
 const filters = reactive({
-  designer_id: null, // استخدام المعرف الرقمي
+  designer_id: null, // تأكد أنها null وليس نصاً فارغاً
   date_from: '',
   date_to: '',
 })

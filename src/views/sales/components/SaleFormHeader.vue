@@ -1,3 +1,4 @@
+<!--src\views\sales\components\SaleFormHeader.vue-->
 <template>
   <div
     class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 transition-all duration-300"
