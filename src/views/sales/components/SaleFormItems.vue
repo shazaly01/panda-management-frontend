@@ -230,7 +230,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useItemStore } from '@/stores/itemStore'
+import { useItemStore } from '@/stores/ItemStore'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
 
