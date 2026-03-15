@@ -1,3 +1,4 @@
+<!--src\views\sales\SaleForm.vue-->
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <SaleFormHeader v-model:form="form" :errors="errors" />
@@ -64,6 +65,7 @@ const createEmptyRow = () => ({
   description: '',
   length: null,
   width: null,
+  area: null,
   qty: 1,
   price: 0,
 })
@@ -157,6 +159,7 @@ const handleSubmit = () => {
       description: row.description || null,
       length: row.length || null,
       width: row.width || null,
+      area: row.area || null,
       qty: Number(row.qty),
       price: Number(row.price),
     })),
@@ -197,6 +200,7 @@ watch(
           description: item.description || '',
           length: item.length !== null ? item.length : null,
           width: item.width !== null ? item.width : null,
+          area: item.area !== null ? item.area : null,
           qty: item.qty || 1,
           price: item.price || 0,
         }))

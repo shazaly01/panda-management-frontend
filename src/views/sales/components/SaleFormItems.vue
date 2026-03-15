@@ -62,6 +62,7 @@
             <th scope="col" class="px-2 py-4 font-bold w-32">البيان</th>
             <th scope="col" class="px-2 py-4 font-bold w-20 text-center">الطول</th>
             <th scope="col" class="px-2 py-4 font-bold w-20 text-center">العرض</th>
+            <th scope="col" class="px-2 py-4 font-bold w-24 text-center">الأمتار</th>
             <th scope="col" class="px-2 py-4 font-bold w-24 text-center">الكمية</th>
             <th scope="col" class="px-2 py-4 font-bold w-28 text-center">السعر</th>
             <th scope="col" class="px-4 py-4 font-bold w-32 text-center">الإجمالي</th>
@@ -135,6 +136,18 @@
                 v-model.number="row.width"
                 placeholder="-"
                 class="w-full p-2 text-center bg-transparent border border-transparent hover:border-gray-200 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-800 rounded-lg transition-all text-sm font-medium dark:text-white"
+              />
+            </td>
+
+            <td class="px-2 py-2 align-middle">
+              <input
+                type="number"
+                v-model.number="row.area"
+                readonly
+                disabled
+                placeholder="-"
+                class="w-full p-2 text-center bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-lg text-sm font-bold text-indigo-600 dark:text-indigo-400 cursor-not-allowed"
+                title="يتم حسابه تلقائياً (الطول × العرض × الكمية)"
               />
             </td>
 
@@ -229,7 +242,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/ItemStore'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
@@ -280,6 +293,7 @@ const createEmptyRow = (item = null) => ({
   description: '',
   length: null,
   width: null,
+  area: null,
   qty: 1,
 
   // قراءة السعر الأساسي بأمان
@@ -288,18 +302,6 @@ const createEmptyRow = (item = null) => ({
 
 const handleItemSelected = (selectedItem) => {
   if (!selectedItem || !selectedItem.id) return
-
-  // 🌟 فحص التكرار: هل الصنف موجود بالفعل في المصفوفة؟
-  const isDuplicate = items.value.some((row) => row.item_id === selectedItem.id)
-
-  if (isDuplicate) {
-    // إطلاق تنبيه للمستخدم وعدم إضافة الصنف
-    toast.warning(`الصنف "${selectedItem.name}" موجود بالفعل في الفاتورة!`, {
-      timeout: 3000,
-      position: 'top-center',
-    })
-    return // إيقاف تنفيذ الدالة هنا
-  }
 
   const firstRow = items.value[0]
 
@@ -335,6 +337,26 @@ const resolveItemName = (id) => {
   const product = availableItems.value.find((i) => i.id === id)
   return product ? product.name : 'جاري التحميل...'
 }
+
+// 🌟 مراقب لحساب عدد الأمتار (المساحة) تلقائياً
+watch(
+  () => items.value,
+  (newItems) => {
+    newItems.forEach((row) => {
+      const length = parseFloat(row.length) || 0
+      const width = parseFloat(row.width) || 0
+      const qty = parseFloat(row.qty) || 0
+
+      // إذا كان هناك طول وعرض، قم بضرب (الطول × العرض × الكمية)
+      if (length > 0 && width > 0) {
+        row.area = parseFloat((length * width * qty).toFixed(4))
+      } else {
+        row.area = null
+      }
+    })
+  },
+  { deep: true },
+)
 </script>
 
 <style scoped>
