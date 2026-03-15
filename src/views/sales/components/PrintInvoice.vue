@@ -70,6 +70,7 @@
                   <th class="py-3 px-3 font-bold text-center w-10 text-orange-500">#</th>
                   <th class="py-3 px-3 font-bold w-2/5">البيان / الخدمة</th>
                   <th class="py-3 px-3 font-bold text-center">المقاس</th>
+                  <th class="py-3 px-3 font-bold text-center">الأمتار</th>
                   <th class="py-3 px-3 font-bold text-center">الكمية</th>
                   <th class="py-3 px-3 font-bold text-center">السعر</th>
                   <th class="py-3 px-3 font-bold text-center bg-orange-600">الإجمالي</th>
@@ -91,6 +92,9 @@
                   </td>
                   <td class="py-3 px-3 text-center font-medium" dir="ltr">
                     {{ item.length && item.width ? `${item.length}x${item.width}` : '---' }}
+                  </td>
+                  <td class="py-3 px-3 text-center font-bold text-slate-600">
+                    {{ item.area ? Number(item.area).toFixed(2) : '---' }}
                   </td>
                   <td class="py-3 px-3 text-center font-bold">
                     <span class="bg-slate-100 py-1 px-2 rounded"

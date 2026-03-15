@@ -87,6 +87,35 @@ const grandTotal = computed(() => {
   }, 0)
 })
 
+// --- حساب إجمالي الأمتار للفاتورة ---
+const totalAreaCalc = computed(() => {
+  return items.value.reduce((sum, row) => {
+    const area = parseFloat(row.area) || 0
+    return sum + area
+  }, 0)
+})
+
+// --- مراقبة الأمتار والمصمم لحساب العمولة تلقائياً (مع السماح بالتعديل اليدوي) ---
+watch(totalAreaCalc, (newArea) => {
+  form.total_area = Number(newArea.toFixed(2))
+
+  // إذا كان هناك مصمم مختار، اضرب الأمتار في 300
+  if (form.designer_id) {
+    form.design_commission = form.total_area * 300
+  }
+})
+
+watch(
+  () => form.designer_id,
+  (newDesigner) => {
+    if (newDesigner) {
+      form.design_commission = form.total_area * 300
+    } else {
+      form.design_commission = null
+    }
+  },
+)
+
 // --- معالجة الإرسال (Submit Logic) ---
 const handleSubmit = () => {
   errors.trx_date = false
@@ -187,6 +216,7 @@ watch(
         walk_in_customer_name: newData.walk_in_customer_name || '',
         designer_id: newData.designer_id || '',
         design_commission: newData.design_commission !== null ? newData.design_commission : null,
+        total_area: newData.total_area || 0,
         shipping_destination: newData.shipping_destination || '',
         paid_amount: Number(newData.paid_amount) || 0, // --- [تمت الإضافة]: جلب المبلغ للتعديل ---
         status: newData.status || 'draft',
@@ -218,6 +248,7 @@ watch(
         walk_in_customer_name: '',
         designer_id: '',
         design_commission: null,
+        total_area: 0,
         shipping_destination: '',
         paid_amount: 0, // --- [تمت الإضافة]: تصفير المدفوع ---
         status: 'draft',
