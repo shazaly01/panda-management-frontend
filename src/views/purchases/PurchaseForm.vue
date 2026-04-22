@@ -1,3 +1,4 @@
+<!--src\views\purchases\PurchaseForm.vue-->
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <PurchaseFormHeader v-model:form="form" :errors="errors" />
@@ -147,6 +148,10 @@ const handleSubmit = () => {
     items: validItems.map((row) => ({
       item_id: row.item_id,
       unit_id: row.unit_id,
+      description: row.description || null,
+      length: row.length ? Number(row.length) : null,
+      width: row.width ? Number(row.width) : null,
+      area: row.area ? Number(row.area) : null,
       qty: Number(row.qty),
       price: Number(row.price),
     })),
@@ -181,6 +186,10 @@ watch(
         items.value = sourceItems.map((item) => ({
           item_id: item.item_id || '',
           unit_id: item.unit_id || '',
+          description: item.description || '',
+          length: item.length !== null ? Number(item.length) : null,
+          width: item.width !== null ? Number(item.width) : null,
+          area: item.area !== null ? Number(item.area) : null,
           qty: Number(item.qty) || 1,
           price: Number(item.price) || 0,
         }))

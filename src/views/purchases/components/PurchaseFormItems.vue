@@ -1,3 +1,4 @@
+<!--src\views\purchases\components\PurchaseFormItems.vue-->
 <template>
   <div
     class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800"
@@ -59,11 +60,15 @@
         >
           <tr>
             <th scope="col" class="px-4 py-4 font-bold w-1/4">الصنف</th>
-            <th scope="col" class="px-2 py-4 font-bold w-1/6">الوحدة</th>
-            <th scope="col" class="px-2 py-4 font-bold w-32 text-center">الكمية</th>
-            <th scope="col" class="px-2 py-4 font-bold w-32 text-center">سعر الشراء</th>
+            <th scope="col" class="px-2 py-4 font-bold w-24">الوحدة</th>
+            <th scope="col" class="px-2 py-4 font-bold w-32">البيان</th>
+            <th scope="col" class="px-2 py-4 font-bold w-20 text-center">الطول</th>
+            <th scope="col" class="px-2 py-4 font-bold w-20 text-center">العرض</th>
+            <th scope="col" class="px-2 py-4 font-bold w-24 text-center">الأمتار</th>
+            <th scope="col" class="px-2 py-4 font-bold w-24 text-center">الكمية</th>
+            <th scope="col" class="px-2 py-4 font-bold w-28 text-center">السعر</th>
             <th scope="col" class="px-4 py-4 font-bold w-32 text-center">الإجمالي</th>
-            <th scope="col" class="px-2 py-4 font-bold w-16 text-center">إجراء</th>
+            <th scope="col" class="px-2 py-4 font-bold w-12 text-center">إجراء</th>
           </tr>
         </thead>
 
@@ -103,6 +108,49 @@
                 />
               </div>
               <p v-if="errors[`unit_${index}`]" class="text-rose-500 text-xs mt-1">مطلوب</p>
+            </td>
+
+            <td class="px-2 py-2 align-middle">
+              <input
+                type="text"
+                v-model="row.description"
+                placeholder="ملاحظات..."
+                class="w-full p-2 bg-transparent border border-transparent hover:border-gray-200 focus:border-emerald-500 focus:bg-white dark:focus:bg-gray-800 rounded-lg transition-all text-sm dark:text-white"
+              />
+            </td>
+
+            <td class="px-2 py-2 align-middle">
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model.number="row.length"
+                placeholder="-"
+                class="w-full p-2 text-center bg-transparent border border-transparent hover:border-gray-200 focus:border-emerald-500 focus:bg-white dark:focus:bg-gray-800 rounded-lg transition-all text-sm font-medium dark:text-white"
+              />
+            </td>
+
+            <td class="px-2 py-2 align-middle">
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                v-model.number="row.width"
+                placeholder="-"
+                class="w-full p-2 text-center bg-transparent border border-transparent hover:border-gray-200 focus:border-emerald-500 focus:bg-white dark:focus:bg-gray-800 rounded-lg transition-all text-sm font-medium dark:text-white"
+              />
+            </td>
+
+            <td class="px-2 py-2 align-middle">
+              <input
+                type="number"
+                v-model.number="row.area"
+                readonly
+                disabled
+                placeholder="-"
+                class="w-full p-2 text-center bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-lg text-sm font-bold text-emerald-600 dark:text-emerald-400 cursor-not-allowed"
+                title="يتم حسابه تلقائياً (الطول × العرض × الكمية)"
+              />
             </td>
 
             <td class="px-2 py-2 align-middle">
@@ -193,7 +241,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useItemStore } from '@/stores/ItemStore'
 import { storeToRefs } from 'pinia'
 import { useToast } from 'vue-toastification'
@@ -238,6 +286,10 @@ const createEmptyRow = (item = null) => ({
   item_name: item ? item.name : '',
   item_code: item ? item.code || item.barcode || '' : '',
   unit_id: item && item.units && item.units.main ? item.units.main.id : '',
+  description: '',
+  length: null,
+  width: null,
+  area: null,
   qty: 1,
   price: item && item.units && item.units.main ? parseFloat(item.units.main.price) || 0 : 0,
 })
@@ -275,8 +327,32 @@ const removeRow = (index) => {
 const calculateRowTotal = (row) => {
   const qty = parseFloat(row.qty) || 0
   const price = parseFloat(row.price) || 0
+  const length = parseFloat(row.length)
+  const width = parseFloat(row.width)
+
+  if (!isNaN(length) && !isNaN(width) && length > 0 && width > 0) {
+    return length * width * qty * price
+  }
   return qty * price
 }
+
+watch(
+  () => items.value,
+  (newItems) => {
+    newItems.forEach((row) => {
+      const length = parseFloat(row.length) || 0
+      const width = parseFloat(row.width) || 0
+      const qty = parseFloat(row.qty) || 0
+
+      if (length > 0 && width > 0) {
+        row.area = parseFloat((length * width * qty).toFixed(4))
+      } else {
+        row.area = null
+      }
+    })
+  },
+  { deep: true },
+)
 
 const resolveItemName = (id) => {
   if (!id) return ''

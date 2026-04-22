@@ -1,3 +1,4 @@
+<!--src\views\purchases\PurchasesTable.vue-->
 <template>
   <AppTable :headers="headers" :items="purchases" :is-loading="isLoading" :row-clickable="false">
     <template #cell-code="{ item }">
@@ -30,16 +31,12 @@
       </span>
     </template>
 
-    <template #cell-is_approved="{ item }">
+    <template #cell-status_label="{ item }">
       <span
-        :class="
-          item.is_approved
-            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-            : 'bg-amber-100 text-amber-800 border border-amber-200'
-        "
-        class="px-2.5 py-0.5 rounded-full text-xs font-bold"
+        :class="getStatusBadgeClass(item.status)"
+        class="px-2.5 py-1 rounded-full text-xs font-bold ring-1 ring-inset shadow-sm"
       >
-        {{ item.is_approved ? 'معتمدة ومستلمة' : 'مسودة' }}
+        {{ item.status_label }}
       </span>
     </template>
 
@@ -124,7 +121,19 @@ const headers = ref([
   { key: 'partner', label: 'المورد' }, // تعديل المسمى
   { key: 'warehouse', label: 'المخزن المستلم' }, // تعديل المسمى
   { key: 'grand_total', label: 'إجمالي المشتريات', class: 'text-left', cellClass: 'text-left' },
-  { key: 'is_approved', label: 'الحالة', class: 'text-center', cellClass: 'text-center' },
+  { key: 'status_label', label: 'الحالة', class: 'text-center', cellClass: 'text-center' },
   { key: 'actions', label: 'الإجراءات', class: 'text-center', cellClass: 'text-center w-48' },
 ])
+
+const getStatusBadgeClass = (status) => {
+  const statusValue = status?.value || status // للتعامل مع الـ Object أو النص الخام
+
+  if (statusValue === 'draft') {
+    return 'bg-amber-50 text-amber-700 ring-amber-600/20' // أصفر (طلب شراء)
+  }
+  if (statusValue === 'confirmed') {
+    return 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' // أخضر (إدخال فعلي)
+  }
+  return 'bg-gray-50 text-gray-700 ring-gray-600/20' // رمادي للملغي أو غيره
+}
 </script>
